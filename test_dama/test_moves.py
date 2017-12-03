@@ -307,3 +307,34 @@ def test_king_chain():
         | . W . .|
         |. . . . |
     """)
+
+
+def test_king_return():
+    board = Board.load("""[w]
+        | . . . .|
+        |. b b . |
+        | W . . .|
+        |. b b . |
+        | . . . .|
+        |. . b . |
+        | . . . .|
+        |. . . . |
+    """)
+    check_prefix(board, [], {'b6'})
+    check_prefix(board, ['b6'], {'d4', 'd8'})
+    check_prefix(board, ['b6', 'd4'], {'f2', 'g1', 'f6', 'g7', 'h8'})
+    check_prefix(board, ['b6', 'd4', 'f6'], {'d8'})
+    check_prefix(board, ['b6', 'd4', 'f6', 'd8'], {'b6', 'a5'})
+    check_prefix(board, ['b6', 'd4', 'f6', 'd8', 'b6'], {'f2', 'g1'})
+    check_prefix(board, ['b6', 'd4', 'f6', 'd8', 'b6', 'f2'], {})
+
+    check_move(board, ['b6', 'd4', 'f6', 'd8', 'b6', 'f2'], """[b]
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . . W .|
+        |. . . . |
+    """)

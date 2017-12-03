@@ -105,8 +105,9 @@ class Board:
                             result.clear()
                         result[x, y] = SubMove((x, y), None)
         else:
-            removed = {}
             prev = [prefix[0]]
+            piece = self.pieces[prefix[0]]
+            removed = {prefix[0]: piece}
             jumping = False
             for coord in prefix[1:]:
                 try:
@@ -129,7 +130,6 @@ class Board:
                     return
                 result[x, y] = SubMove((x, y), taken)
 
-            piece = self.pieces[prefix[0]]
             if piece.islower():
                 y_dirs = [DIRS[self.player]]
             else:
@@ -146,7 +146,7 @@ class Board:
                         p = self.pieces.get((x, y))
                         if not p or (x, y) in removed:
                             add_move(x, y, taken)
-                        elif p.lower() == self.player:
+                        elif p and p.lower() == self.player:
                             break
                         elif not taken:
                             taken = x, y
