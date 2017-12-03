@@ -64,6 +64,35 @@ def test_choice():
     check_prefix(board, ['e1'], {'c3', 'g3'})
 
 
+def test_jump_self():
+    board = Board.load("""[w]
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . w w .|
+        |. . w . |
+    """)
+    check_prefix(board, [], {'d2', 'f2'})
+
+
+def test_jump_opponent():
+    board = Board.load("""[w]
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . w b .|
+        |. . w . |
+    """)
+    check_prefix(board, [], {'e1'})
+    check_prefix(board, ['e1'], {'g3'})
+
+
 def test_no_choice():
     board = Board.load("""[w]
         | . . . .|
@@ -121,5 +150,160 @@ def test_chain():
         | . . . .|
         |. . b . |
         | . . b .|
+        |. . . . |
+    """)
+
+
+def test_upgrade():
+    board = Board.load("""[w]
+        | . . . .|
+        |. . w . |
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |b . . . |
+        | w . . .|
+        |. . . . |
+    """)
+    check_prefix(board, [], {'b2', 'e7'})
+    check_prefix(board, ['e7'], {'d8', 'f8'})
+    check_prefix(board, ['e7', 'd8'], {})
+
+    check_move(board, ['e7', 'd8'], """[b]
+        | . W . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |b . . . |
+        | w . . .|
+        |. . . . |
+    """)
+
+    check_move(board, ['a3', 'c1'], """[w]
+        | . W . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. B . . |
+    """)
+
+
+def test_king():
+    board = Board.load("""[w]
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . W . |
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+    """)
+    check_prefix(board, [], {'e5'})
+    check_prefix(board, ['e5'], {'f6', 'g7', 'h8', 'a1', 'b2', 'c3', 'd4',
+                                 'f4', 'g3', 'h2', 'b8', 'c7', 'd6'})
+
+
+def test_king_take():
+    board = Board.load("""[w]
+        | . . . .|
+        |. . . W |
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. b . . |
+        | . . . .|
+        |. . . . |
+    """)
+    check_prefix(board, [], {'g7'})
+    check_prefix(board, ['g7'], {'a1', 'b2'})
+
+
+def test_king_choice():
+    board = Board.load("""[w]
+        | . . . .|
+        |. . . b |
+        | . . . .|
+        |. . W . |
+        | . . . .|
+        |. b . b |
+        | . . w .|
+        |. . . . |
+    """)
+    check_prefix(board, [], {'e5'})
+    check_prefix(board, ['e5'], {'a1', 'b2', 'h8', 'h2'})
+
+
+def test_king_lose():
+    board = Board.load("""[w]
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . b . .|
+        |. b . . |
+        | . . . .|
+        |W . . . |
+    """)
+    check_prefix(board, [], {'a1'})
+    check_prefix(board, ['a1'], {'b2'})
+
+    check_move(board, ['a1', 'b2'], """[b]
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . b . .|
+        |. b . . |
+        | W . . .|
+        |. . . . |
+    """)
+    check_prefix(board, [], {'c3'})
+    check_prefix(board, ['c3'], {'a1'})
+
+    check_move(board, ['c3', 'a1'], """[w]
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . b . .|
+        |. . . . |
+        | . . . .|
+        |B . . . |
+    """)
+    check_prefix(board, [], {})
+
+
+def test_king_chain():
+    board = Board.load("""[w]
+        | . . . .|
+        |. b . . |
+        | . . b .|
+        |. . . . |
+        | b w . b|
+        |. . b . |
+        | b . . .|
+        |W . . . |
+    """)
+    check_prefix(board, [], {'a1'})
+    check_prefix(board, ['a1'], {'c3'})
+    check_prefix(board, ['a1', 'c3'], {'a5'})
+    check_prefix(board, ['a1', 'c3', 'a5'], {'d8'})
+    check_prefix(board, ['a1', 'c3', 'a5', 'd8'], {'g5'})
+    check_prefix(board, ['a1', 'c3', 'a5', 'd8', 'g5'], {'d2', 'c1'})
+    check_prefix(board, ['a1', 'c3', 'a5', 'd8', 'g5', 'd2'], {})
+
+    check_move(board, ['a1', 'c3', 'a5', 'd8', 'g5', 'd2'], """[b]
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . w . b|
+        |. . . . |
+        | . W . .|
         |. . . . |
     """)

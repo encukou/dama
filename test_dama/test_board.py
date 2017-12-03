@@ -22,7 +22,7 @@ def test_dump():
     """).lstrip()
 
 
-def test_initial():
+def test_initial_player():
     board = Board()
     assert board.player == 'w'
 

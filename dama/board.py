@@ -119,26 +119,42 @@ class Board:
                 else:
                     return {}
                 prev += (coord,)
+
+            def add_move(x, y, taken):
+                nonlocal jumping
+                if taken and not jumping:
+                    jumping = True
+                    result.clear()
+                if not taken and jumping:
+                    return
+                result[x, y] = SubMove((x, y), taken)
+
+            piece = self.pieces[prefix[0]]
+            if piece.islower():
+                y_dirs = [DIRS[self.player]]
+            else:
+                y_dirs = -1, 1
             for x_direction in -1, 1:
-                y_direction = DIRS[self.player]
-                x, y = prefix[-1]
-                x += x_direction
-                y += y_direction
-                if (x, y) not in self.valid_coords:
-                    continue
-                p = self.pieces.get((x, y))
-                if not p:
-                    if jumping:
-                        continue
-                    result[x, y] = SubMove((x, y), None)
-                elif p.lower() != self.player:
-                    coord = x + x_direction, y + y_direction
-                    if coord not in self.valid_coords or coord in self.pieces:
-                        continue
-                    if not jumping:
-                        result.clear()
-                        jumping = True
-                    result[coord] = SubMove((coord), (x, y))
+                for y_direction in y_dirs:
+                    x, y = prefix[-1]
+                    taken = None
+                    while True:
+                        x += x_direction
+                        y += y_direction
+                        if (x, y) not in self.valid_coords:
+                            break
+                        p = self.pieces.get((x, y))
+                        if not p or (x, y) in removed:
+                            add_move(x, y, taken)
+                        elif p.lower() == self.player:
+                            break
+                        elif not taken:
+                            taken = x, y
+                            continue
+                        else:
+                            break
+                        if piece.islower():
+                            break
         return result
 
     def get_submoves(self, prefix):
@@ -158,6 +174,7 @@ class Board:
         return not self.possible_moves(prefix)
 
     def make_move(self, move):
+        deleted = []
         if not self.move_finished(move):
             raise ValueError('bad move')
         piece = self.pieces.pop(move[0])
@@ -165,11 +182,16 @@ class Board:
         for coord in move[1:]:
             f = self.get_submoves(prefix)[coord]
             if f.take:
-                del self.pieces[f.take]
+                deleted.append(self.pieces.pop(f.take))
             prefix += (coord,)
-        self.pieces[move[-1]] = piece
         if self.player == 'w':
             self.player = 'b'
+            if move[-1][1] == self.size-1:
+                piece = piece.upper()
         else:
             self.player = 'w'
+            if move[-1][1] == 0:
+                piece = piece.upper()
+        self.pieces[move[-1]] = piece
         self._move_cache.clear()
+        return deleted
