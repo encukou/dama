@@ -53,6 +53,8 @@ def make_window(board=None):
     piece_sprites = {}
     shine_batch = pyglet.graphics.Batch()
     shine_sprites = {}
+    mark_batch = pyglet.graphics.Batch()
+    mark_sprites = {}
     for x in range(board.size):
         for y in range(board.size):
             bg_sprites[x, y] = pyglet.sprite.Sprite(
@@ -64,6 +66,9 @@ def make_window(board=None):
             shine_sprites[x, y] = pyglet.sprite.Sprite(
                 img_shine,
                 batch=shine_batch)
+            mark_sprites[x, y] = pyglet.sprite.Sprite(
+                img_x,
+                batch=mark_batch)
 
     def _size_vars():
         size = min(window.width, window.height) * BOARD_SIZE_COEFF
@@ -110,7 +115,11 @@ def make_window(board=None):
             else:
                 sprite.opacity = 0
                 sprite.scale = 0
-    shine()
+        for pos, sprite in mark_sprites.items():
+            if pos in jumped:
+                sprite.opacity = 255
+            else:
+                sprite.opacity = 0
 
     @window.event
     def on_draw():
@@ -118,15 +127,17 @@ def make_window(board=None):
         bg_batch.draw()
         shine_batch.draw()
         piece_batch.draw()
+        mark_batch.draw()
 
     @window.event
     def on_resize(w, h):
         size, tile_size, start_x, start_y = _size_vars()
-        for sprites in bg_sprites, shine_sprites, piece_sprites:
+        for sprites in bg_sprites, shine_sprites, piece_sprites, mark_sprites:
             for (x, y), sprite in sprites.items():
                 sprite.x = start_x + x * tile_size
                 sprite.y = start_y + y * tile_size
                 sprite.scale = tile_size / sprite.image.width
+        shine()
 
     @window.event
     def on_mouse_motion(mx, my, dx, dy):
