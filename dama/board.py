@@ -107,19 +107,14 @@ class Board:
         else:
             prev = [prefix[0]]
             piece = self.pieces[prefix[0]]
-            removed = {prefix[0]: piece}
-            jumping = False
-            for coord in prefix[1:]:
-                try:
-                    f = self.get_submoves(prev)[coord]
-                except KeyError:
-                    raise ValueError('bad prefix')
-                if f.take:
-                    removed[f.take] = self.pieces[f.take]
-                    jumping = True
-                else:
+            removed = set(self.get_jumped(prefix))
+            if removed:
+                jumping = True
+            else:
+                jumping = False
+                if len(prefix) > 1:
                     return {}
-                prev += (coord,)
+            removed.add(prefix[0])
 
             def add_move(x, y, taken):
                 nonlocal jumping
@@ -172,6 +167,21 @@ class Board:
 
     def move_finished(self, prefix):
         return not self.possible_moves(prefix)
+
+    def get_jumped(self, prefix):
+        if not prefix:
+            return []
+        result = []
+        prev = [prefix[0]]
+        for coord in prefix[1:]:
+            try:
+                f = self.get_submoves(prev)[coord]
+            except KeyError:
+                raise ValueError('bad prefix')
+            if f.take:
+                result.append(f.take)
+            prev += (coord,)
+        return result
 
     def make_move(self, move):
         deleted = []
