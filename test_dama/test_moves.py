@@ -353,3 +353,19 @@ def test_promotion_ends_turn():
     check_prefix(board, [], {'b6'})
     check_prefix(board, ['b6'], {'d8'})
     check_prefix(board, ['b6', 'd8'], {})
+
+def test_basic_jump():
+    board = Board.load("""[w]
+        | b b . .|
+        |b . b . |
+        | . . . .|
+        |. . . w |
+        | b . . .|
+        |w . . . |
+        | . . . .|
+        |w . w . |
+    """)
+    check_prefix(board, [], {'a3'})
+    check_prefix(board, ['a3'], {'c5'})
+    check_prefix(board, ['a3', 'c5'], {})
+

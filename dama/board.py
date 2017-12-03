@@ -115,16 +115,6 @@ class Board:
                 if len(prefix) > 1:
                     return {}
             removed.add(prefix[0])
-
-            def add_move(x, y, taken):
-                nonlocal jumping
-                if taken and not jumping:
-                    jumping = True
-                    result.clear()
-                if not taken and jumping:
-                    return
-                result[x, y] = SubMove((x, y), taken)
-
             if piece.islower():
                 y_dirs = [DIRS[self.player]]
             else:
@@ -142,7 +132,14 @@ class Board:
                         if not p or (x, y) == prefix[0]:
                             if taken in removed:
                                 break
-                            add_move(x, y, taken)
+                            if taken and not jumping:
+                                jumping = True
+                                result.clear()
+                            if not taken and jumping:
+                                if piece.islower():
+                                    break
+                                continue
+                            result[x, y] = SubMove((x, y), taken)
                         elif p and p.lower() == self.player:
                             break
                         elif not taken or p in removed:
@@ -206,4 +203,3 @@ class Board:
                 piece = piece.upper()
         self.pieces[move[-1]] = piece
         self._move_cache.clear()
-        return deleted
