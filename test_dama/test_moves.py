@@ -338,3 +338,19 @@ def test_king_return():
         | . . W .|
         |. . . . |
     """)
+
+
+def test_promotion_ends_turn():
+    board = Board.load("""[w]
+        | . . . .|
+        |. b b . |
+        | w . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+        | . . . .|
+        |. . . . |
+    """)
+    check_prefix(board, [], {'b6'})
+    check_prefix(board, ['b6'], {'d8'})
+    check_prefix(board, ['b6', 'd8'], {})
