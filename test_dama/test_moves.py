@@ -17,6 +17,17 @@ def check_prefix(board, prefix, expected):
         assert board.move_finished(prefix)
 
 
+def check_move(board, instruction, expected):
+    move = [cli.coord_from_name(n) for n in instruction]
+    board.make_move(move)
+    print(f'After move {"-".join(instruction)}, got:')
+    print(board.dump())
+    expect_board = Board.load(expected)
+    assert board.player == expect_board.player
+    assert board.pieces == expect_board.pieces
+    assert board == expect_board
+
+
 def test_initial():
     board = Board()
     check_prefix(board, [], {'a3', 'c3', 'e3', 'g3'})
@@ -39,7 +50,7 @@ def test_illegal():
 
 
 def test_choice():
-    board = Board.load("""
+    board = Board.load("""[w]
         | . . . .|
         |. . . . |
         | . . . .|
@@ -54,7 +65,7 @@ def test_choice():
 
 
 def test_no_choice():
-    board = Board.load("""
+    board = Board.load("""[w]
         | . . . .|
         |. . . . |
         | . . . .|
@@ -70,7 +81,7 @@ def test_no_choice():
 
 
 def test_no_jump_after_move():
-    board = Board.load("""
+    board = Board.load("""[w]
         | . . . .|
         |. . . . |
         | . . . .|
@@ -86,7 +97,7 @@ def test_no_jump_after_move():
 
 
 def test_chain():
-    board = Board.load("""
+    board = Board.load("""[w]
         | . b . .|
         |. . b . |
         | . b b .|
@@ -100,3 +111,15 @@ def test_chain():
     check_prefix(board, ['e1'], {'c3', 'g3'})
     check_prefix(board, ['e1', 'c3'], {'e5'})
     check_prefix(board, ['e1', 'c3', 'e5'], {'c7', 'g7'})
+    check_prefix(board, ['e1', 'c3', 'e5', 'c7'], {})
+
+    check_move(board, ['e1', 'c3', 'e5', 'c7'], """[b]
+        | . b . .|
+        |. w b . |
+        | . . b .|
+        |. b . . |
+        | . . . .|
+        |. . b . |
+        | . . b .|
+        |. . . . |
+    """)

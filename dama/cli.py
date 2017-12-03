@@ -22,9 +22,11 @@ def run():
         print(board.dump())
         prefix = []
         while True:
+            name = PLAYER_NAMES[board.player]
             allowed_submoves = board.get_submoves(prefix)
             answers = {coord_name(*m): m for m in allowed_submoves}
-            name = PLAYER_NAMES[board.player]
+            if not answers:
+                break
             if not prefix:
                 question = 'odkud hraješ'
             else:
@@ -43,3 +45,9 @@ def run():
                 print()
                 break
             print('-')
+
+        if prefix:
+            board.make_move(prefix)
+        else:
+            print(f'{name} nemá žádné další tahy')
+            break

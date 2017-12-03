@@ -26,6 +26,17 @@ class Board:
                 if (x + y) % 2 == 0:
                     self.pieces[x, y] = 'b'
 
+    def __eq__(self, other):
+        try:
+            return (self.size == other.size
+                    and self.player == other.player
+                    and self.pieces == other.pieces)
+        except AttributeError:
+            return NotImplemented
+
+    def __ne__(self, other):
+        return not self == other
+
     def dump(self):
         rows = [[' ' if (x + y) % 2 == 0 else '.'
                  for x in range(self.size)] for y in range(self.size)]
@@ -43,10 +54,17 @@ class Board:
 
     @classmethod
     def load(cls, source):
+        if source.startswith('[w]'):
+            player = 'w'
+        elif source.startswith('[b]'):
+            player = 'b'
+        else:
+            raise ValueError('bad data')
         rows = [r for r in source.splitlines() if r.count('|') == 2]
         if not rows:
             raise ValueError('no data found')
         self = cls(size=len(rows))
+        self.player = player
         self.pieces.clear()
         for ym, row in enumerate(rows):
             pre, row, post = row.split('|')
@@ -138,3 +156,20 @@ class Board:
 
     def move_finished(self, prefix):
         return not self.possible_moves(prefix)
+
+    def make_move(self, move):
+        if not self.move_finished(move):
+            raise ValueError('bad move')
+        piece = self.pieces.pop(move[0])
+        prefix = [move[0]]
+        for coord in move[1:]:
+            f = self.get_submoves(prefix)[coord]
+            if f.take:
+                del self.pieces[f.take]
+            prefix += (coord,)
+        self.pieces[move[-1]] = piece
+        if self.player == 'w':
+            self.player = 'b'
+        else:
+            self.player = 'w'
+        self._move_cache.clear()
