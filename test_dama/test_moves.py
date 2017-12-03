@@ -325,17 +325,16 @@ def test_king_return():
     check_prefix(board, ['b6', 'd4'], {'f2', 'g1', 'f6', 'g7', 'h8'})
     check_prefix(board, ['b6', 'd4', 'f6'], {'d8'})
     check_prefix(board, ['b6', 'd4', 'f6', 'd8'], {'b6', 'a5'})
-    check_prefix(board, ['b6', 'd4', 'f6', 'd8', 'b6'], {'f2', 'g1'})
-    check_prefix(board, ['b6', 'd4', 'f6', 'd8', 'b6', 'f2'], {})
+    check_prefix(board, ['b6', 'd4', 'f6', 'd8', 'b6'], {})
 
-    check_move(board, ['b6', 'd4', 'f6', 'd8', 'b6', 'f2'], """[b]
+    check_move(board, ['b6', 'd4', 'f6', 'd8', 'b6'], """[b]
         | . . . .|
         |. . . . |
-        | . . . .|
+        | W . . .|
         |. . . . |
         | . . . .|
-        |. . . . |
-        | . . W .|
+        |. . b . |
+        | . . . .|
         |. . . . |
     """)
 

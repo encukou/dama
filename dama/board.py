@@ -139,11 +139,13 @@ class Board:
                         if (x, y) not in self.valid_coords:
                             break
                         p = self.pieces.get((x, y))
-                        if not p or (x, y) in removed:
+                        if not p or (x, y) == prefix[0]:
+                            if taken in removed:
+                                break
                             add_move(x, y, taken)
                         elif p and p.lower() == self.player:
                             break
-                        elif not taken:
+                        elif not taken or p in removed:
                             taken = x, y
                             continue
                         else:
