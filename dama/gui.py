@@ -3,11 +3,13 @@ import os
 from dama.board import Board
 
 import pyglet
+import importlib_resources
 
 SPRITE_SIZE = 128
 BOARD_SIZE_COEFF = 0.9
-spritesheet = pyglet.image.load('dama/resources/spritesheet.png')
 
+with importlib_resources.path('dama.resources', 'spritesheet.png') as path:
+    spritesheet = pyglet.image.load(path)
 
 def get_region(x, y):
     image = spritesheet.get_region(x=x*(SPRITE_SIZE+1), y=y*(SPRITE_SIZE+1),
