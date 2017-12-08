@@ -5,6 +5,9 @@ cache: pip
 matrix:
   include:
     - python: 3.6
+      os: linux
+    - python: 3.6
+      os: osx
 
 install:
   - pip install "pip>=7.1.0"
@@ -21,7 +24,8 @@ deploy:
     provider: releases
     api_key:
         secure: B32mRGKN54tJG6WydSMI26JSVU/r+l/45m6Ykg/9gQnyWQgXO6bD7Wn8zTRvXjasVkxxKcwlCnSBcKnfOY16fSmU55eSpSvfWU5Y+NcT2zp4jYzeBgfYr8jSKsllW0WU9sKy/YBQfXOdlqh5xs9BcuB9qzgx/6OGU1HVFKIkvuwYvry7+g08tpvImUMm8xqAcYnvsH+D9VivOKSqYOGjDLcTY9NACa+K3ObXlfC2guHcTU9pBi4t23MyhQyH0SHUVhZ4KuZSXUAE7TqMGb0LlDQzrqIwtBcHnhsVWHIOpN/lXt1rn5GdrqvWeRRablz1tM4q3u0CKl/PWp9AC+HZYdXrM7CgqONP9u+vjhhB6e8d76tzli5Cki5WXP4aOK2aSBpGT0sr1T/guMW4J50oWw2RFdRie3mg+dYoBSiSZpwkATb907xzuECR1efzPu8XygIb4oLMIaXizLVZiBxqykKlTU0dZRtA6PzZCXpRKO7r8U8MdCoY2zG3FIWqBuQK/CrGuu5aTWcZzSbyYzwltoQbvguU42h4k9NwV+TC17G/t3/x/8yMmwbjVb0Qww0HiD5wGvrZzc+vxWOWEIf7iqF9qwPqr1ZY7Xp2W1ifqgz/gEr+dkoJeRcrKsCqpKg+jUuVYkqbvGuakiNAlmqhE7dZYOL/YNy4omRRJEzsFjs=
-    file: dist/dama-game
+    file_glob: true
+    file: dist/*
     skip_cleanup: true
     on:
         tags: true
