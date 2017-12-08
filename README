@@ -1,1 +1,17 @@
 Example board game
+
+To get it::
+
+    git clone https://github.com/encukou/dama
+
+To install requirements, run (in a virtual environment)::
+
+    python -m pip install pyglet pytest importlib_resources
+
+To play, run (in a virtual environment)::
+
+    python -m dama
+
+    python -m dama.gui
+
+To run tests, run (in a virtual environment)::
