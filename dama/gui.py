@@ -6,7 +6,7 @@ import pyglet
 
 SPRITE_SIZE = 128
 BOARD_SIZE_COEFF = 0.9
-spritesheet = pyglet.image.load('dama/resources/spritesheet.png')
+spritesheet = pyglet.image.load('dama/spritesheet.png')
 
 
 def get_region(x, y):
